@@ -18,7 +18,6 @@ def opposite_direction(direction):
   else:
     return None
 
-
 # Load world
 world = World()
 
