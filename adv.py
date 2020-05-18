@@ -5,6 +5,19 @@ from world import World
 import random
 from ast import literal_eval
 
+
+def opposite_direction(direction):
+  if direction == 'n':
+    return 's'
+  elif direction == 's':
+    return 'n'
+  elif direction == 'e':
+    return 'w'
+  elif direction == 'w':
+    return 'e'
+  else:
+    return None
+
 # Load world
 world = World()
 
@@ -25,11 +38,33 @@ world.print_rooms()
 
 player = Player(world.starting_room)
 
+
+def traverse_graph(current_room, rooms_visited=None):
+
+    directions=[]
+
+    if rooms_visited == None:
+      rooms_visited = set()
+
+    for direction in player.current_room.get_exits():
+        player.travel(direction)
+
+        if player.current_room in rooms_visited:
+            player.travel(opposite_direction(direction))
+
+        else:
+            rooms_visited.add(player.current_room)
+            directions.append(direction)
+            directions = directions + traverse_graph(player.current_room, rooms_visited)
+            player.travel(opposite_direction(direction))
+            directions.append(opposite_direction(direction))
+
+    return directions
+
+
 # Fill this out with directions to walk
 # traversal_path = ['n', 'n']
-traversal_path = []
-
-
+traversal_path = traverse_graph(player.current_room)
 
 # TRAVERSAL TEST
 visited_rooms = set()
@@ -51,12 +86,12 @@ else:
 #######
 # UNCOMMENT TO WALK AROUND
 #######
-player.current_room.print_room_description(player)
-while True:
-    cmds = input("-> ").lower().split(" ")
-    if cmds[0] in ["n", "s", "e", "w"]:
-        player.travel(cmds[0], True)
-    elif cmds[0] == "q":
-        break
-    else:
-        print("I did not understand that command.")
+# player.current_room.print_room_description(player)
+# while True:
+#     cmds = input("-> ").lower().split(" ")
+#     if cmds[0] in ["n", "s", "e", "w"]:
+#         player.travel(cmds[0], True)
+#     elif cmds[0] == "q":
+#         break
+#     else:
+#         print("I did not understand that command.")
